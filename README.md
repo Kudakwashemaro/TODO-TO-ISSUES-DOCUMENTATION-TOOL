@@ -1,50 +1,106 @@
 # TODO → GitHub Issues Automation
-<img width="1020" height="556" alt="TODO-TO-ISSUES" src="https://github.com/user-attachments/assets/4056f73f-3462-4373-a411-9adb19b619d2" />
 
+<p align="center">
+  <img width="1020" height="556" alt="TODO-TO-ISSUES" src="https://github.com/user-attachments/assets/4056f73f-3462-4373-a411-9adb19b619d2" />
+</p>
 
-### Title-Based Anchoring with Rich Metadata
+<p align="center">
+  <a href="https://github.com/Kudakwashemaro/TODO-TO-ISSUES-DOCUMENTATION-TOOL/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Kudakwashemaro/TODO-TO-ISSUES-DOCUMENTATION-TOOL" alt="License"></a>
+  <a href="https://github.com/Kudakwashemaro/TODO-TO-ISSUES-DOCUMENTATION-TOOL/stargazers"><img src="https://img.shields.io/github/stars/Kudakwashemaro/TODO-TO-ISSUES-DOCUMENTATION-TOOL" alt="Stars"></a>
+  <a href="https://github.com/Kudakwashemaro/TODO-TO-ISSUES-DOCUMENTATION-TOOL/wiki"><img src="https://img.shields.io/badge/docs-wiki-blue" alt="Wiki"></a>
+</p>
 
-Automated conversion of structured TODO comments into **fully managed GitHub Issues**, using a **title-based anchoring system** that supports cross-file references, prioritization, categorization, and assignment — *without requiring issue numbers in code*.
-
-This project is designed for teams that want disciplined, scalable, and auditable technical debt tracking directly from their codebase.
+<p align="center">
+  <strong>Title-Based Anchoring with Rich Metadata</strong><br>
+  Automated conversion of structured TODO comments into <strong>fully managed GitHub Issues</strong>
+</p>
 
 ---
 
-## Why This Exists
+## 📖 Table of Contents
+
+- [Quick Start](#-quick-start)
+- [Why This Exists](#-why-this-exists)
+- [Core Concept](#-core-concept-title-based-anchoring)
+- [TODO Formats](#-todo-formats)
+- [Supported Metadata](#-supported-metadata)
+- [Configuration](#-configuration)
+- [Live Demo](#-live-demo)
+- [Workflow Behavior](#-workflow-behavior)
+- [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
+- [Author](#-author)
+
+---
+
+## 🚀 Quick Start
+
+### Option 1: Use This Template (Recommended)
+
+1. Click **"Use this template"** → **"Create a new repository"**
+2. **That's it!** The workflow runs automatically on every push to `main`
+
+### Option 2: Add to Existing Repository
+
+Copy these files to your repository:
+
+```
+.github/
+├── scripts/
+│   ├── todo_to_issues.py
+│   └── requirements.txt
+├── workflows/
+│   └── todo-to-issues.yml
+└── todo-config.yml
+```
+
+### Test Locally (Dry Run)
+
+```bash
+pip install -r .github/scripts/requirements.txt
+python3 .github/scripts/todo_to_issues.py --dry-run
+```
+
+> 📚 **Full documentation available in the [Wiki](https://github.com/Kudakwashemaro/TODO-TO-ISSUES-DOCUMENTATION-TOOL/wiki)**
+
+---
+
+## 💡 Why This Exists
 
 Traditional TODO comments are:
 
-* Invisible to project planning
-* Hard to track across files
-* Easy to forget and never resolve
+- ❌ Invisible to project planning
+- ❌ Hard to track across files
+- ❌ Easy to forget and never resolve
 
 This tool turns TODOs into **first-class project artifacts**:
 
-* One issue per concern
-* Multiple code locations linked automatically
-* Rich metadata for planning and prioritization
-* Zero manual bookkeeping
+- ✅ One issue per concern
+- ✅ Multiple code locations linked automatically
+- ✅ Rich metadata for planning and prioritization
+- ✅ Zero manual bookkeeping
 
 ---
 
-## Core Concept: Title-Based Anchoring
+## 🎯 Core Concept: Title-Based Anchoring
 
 **TODOs are bundled by a shared `TITLE` string.**
 
-* One **Canonical TODO** creates the GitHub Issue
-* Multiple **Reference TODOs** link to the same issue by matching the title
-* Metadata drives labels, assignment, and categorization
-* You do *not* need to know the issue number beforehand
+| Concept | Description |
+|---------|-------------|
+| **Canonical TODO** | Creates the GitHub Issue (use once per concern) |
+| **Reference TODO** | Links to the same issue by matching the title |
+| **Metadata** | Drives labels, assignment, and categorization |
 
-This enables multi-file, cross-cutting TODOs without fragmentation.
+> You do *not* need to know the issue number beforehand. This enables multi-file, cross-cutting TODOs without fragmentation.
 
 ---
 
-## TODO Formats
+## 📝 TODO Formats
 
 ### Canonical TODO (Creates the Issue)
 
-Use **once per concern**, ideally where the primary work will occur.
+Use **once per concern**, ideally where the primary work will occur:
 
 ```python
 # TODO(TITLE: Fix race condition in user update): Happens when two requests run concurrently
@@ -53,99 +109,40 @@ Use **once per concern**, ideally where the primary work will occur.
 With metadata:
 
 ```python
-# TODO(
-#   TITLE: Fix race condition in user update,
-#   PRIORITY: high,
-#   TYPE: bug,
-#   ASSIGNEE: johndoe
-# ): Concurrent updates cause data corruption
+# TODO(TITLE: Fix race condition in user update, PRIORITY: high, TYPE: bug, ASSIGNEE: johndoe): Concurrent updates cause data corruption
 ```
-
-**Syntax**
-
-```
-TODO(TITLE: <Unique Title>, [METADATA...]) : [Optional Description]
-```
-
----
 
 ### Reference TODO (Links to the Issue)
 
-Use anywhere else the same concern applies.
+Use anywhere else the same concern applies:
 
 ```python
 # TODO(REF: Fix race condition in user update): Also check this write path
 ```
 
-**Rules**
-
-* The `REF` title **must match the canonical TITLE exactly**
-* The reference context is added to the issue checklist
+> ⚠️ The `REF` title **must match the canonical TITLE exactly**
 
 ---
 
-## Supported Metadata
+## 🏷️ Supported Metadata
 
-Metadata is read **only from the Canonical TODO**.
+| Tag | Values | Purpose |
+|-----|--------|---------|
+| `PRIORITY` | `critical`, `high`, `medium`, `low` | Issue priority level |
+| `TYPE` | `bug`, `feature`, `refactor`, `documentation`, `test`, `performance`, `security`, `accessibility` | Issue category |
+| `EFFORT` | `small` (<2h), `medium` (2-8h), `large` (1-3d), `xlarge` (>3d) | Estimated effort |
+| `EPIC` | Any string | Groups related issues (becomes `epic:your-epic` label) |
+| `ASSIGNEE` | GitHub username | Auto-assigns the issue |
 
-| Tag        | Purpose                  |         |          |               |      |             |          |                |
-| ---------- | ------------------------ | ------- | -------- | ------------- | ---- | ----------- | -------- | -------------- |
-| `PRIORITY` | `critical                | high    | medium   | low`          |      |             |          |                |
-| `TYPE`     | `bug                     | feature | refactor | documentation | test | performance | security | accessibility` |
-| `EFFORT`   | `small                   | medium  | large    | xlarge`       |      |             |          |                |
-| `EPIC`     | Groups related issues    |         |          |               |      |             |          |                |
-| `ASSIGNEE` | Auto-assigns GitHub user |         |          |               |      |             |          |                |
+### Automatic Labels
 
----
-
-## Automatic Labeling
-
-### Priority
-
-* `priority:critical`
-* `priority:high`
-* `priority:medium` (default)
-* `priority:low`
-
-### Type
-
-* `type:bug`
-* `type:feature`
-* `type:refactor`
-* `type:documentation`
-* `type:test`
-* `type:performance`
-* `type:security`
-* `type:accessibility`
-
-### Effort
-
-* `effort:small` (< 2h)
-* `effort:medium` (2–8h)
-* `effort:large` (1–3 days)
-* `effort:xlarge` (> 3 days)
-
-### Always Applied
-
-* `todo`
-* `tech-debt`
-
-Epic metadata generates labels like:
-
-```
-epic:oauth-migration
-```
+All issues automatically receive `todo` and `tech-debt` labels, plus any metadata-derived labels like `priority:high`, `type:bug`, etc.
 
 ---
 
-## How to Use This Template
+## ⚙️ Configuration
 
-1.  **Click "Use this template"** to create a new repository from this one.
-2.  **That's it!** The workflow is pre-configured to run on every push to `main`.
-
-### Configuration
-
-You can customize the behavior by editing `.github/todo-config.yml`.
+Customize behavior via `.github/todo-config.yml`:
 
 ```yaml
 default_labels: ['todo', 'tech-debt']
@@ -155,101 +152,86 @@ auto_close: true
 duplicate_threshold: 0.85
 ```
 
-### Manual Usage (Dry Run)
+> 📖 See [Configuration](https://github.com/Kudakwashemaro/TODO-TO-ISSUES-DOCUMENTATION-TOOL/wiki/Configuration) in the wiki for all options.
 
-You can run the script locally to see what issues would be created without actually creating them:
+---
 
-```bash
-# Install dependencies
-pip install -r .github/scripts/requirements.txt
+## 🎬 Live Demo
 
-# Run in dry-run mode
-python3 .github/scripts/todo_to_issues.py --dry-run
+This repository includes example files:
+
+| File | Purpose |
+|------|---------|
+| [example.py](example.py) | Canonical TODOs with metadata |
+| [example_utils.py](example_utils.py) | Reference TODOs linking to the same issues |
+
+**On push, the workflow creates issues like:**
+
+- **TODO: Implement Payment Gateway Integration**
+  - Labels: `priority:critical`, `type:feature`, `epic:monetization`
+  - Body: Checklist with all file locations
+
+---
+
+## 🔄 Workflow Behavior
+
+```
+Code Push → Scan TODOs → Match by Title → Create/Update Issues
 ```
 
-## Live Demo in this Repository
-
-This repository includes example files to demonstrate the workflow in action:
-
-1.  **[example.py](example.py)**: Contains "Canonical" TODOs that define the Issues.
-    *   Defines a critical feature: `Implement Payment Gateway Integration`.
-    *   Defines a security fix: `Fix XSS vulnerability`.
-    *   Demonstrates metadata usage: `PRIORITY`, `TYPE`, `EPIC`, `ASSIGNEE`.
-2.  **[example_utils.py](example_utils.py)**: Contains "Reference" TODOs.
-    *   Links back to the Payment Gateway issue from a different file.
-    *   Shows how multiple files can track progress on the same Issue.
-
-**What happens when you push?**
-The workflow will parse these files and create Issues like:
-
-*   **Issue 1:** `TODO: Implement Payment Gateway Integration`
-    *   **Labels:** `priority:critical`, `type:feature`, `epic:monetization`
-    *   **Body:** Includes a checklist linking to `example.py:5`, `example.py:9`, and `example_utils.py:10`.
-
-## Workflow Behavior
-
-1.  **Scan**: Runs on push to `main` or manually.
-2.  **Match**: Groups TODOs by `TITLE`.
-3.  **Create**: Creates a GitHub Issue if none exists for the title.
-4.  **Update**: Updates existing issues with new references.
-5.  **Auto-Close**: (Optional) Closes issues if the TODO is removed from the code.
-
-**Troubleshooting**
-
-*   Check GitHub Actions logs.
-*   Ensure `GITHUB_TOKEN` has `issues: write` permission (default in new repos).
-
+1. **Scan**: Runs on push to `main` or manually
+2. **Match**: Groups TODOs by `TITLE`
+3. **Create**: Creates a GitHub Issue if none exists
+4. **Update**: Adds new references to existing issues
+5. **Auto-Close**: Closes issues when TODOs are removed (if enabled)
 
 ---
 
-## Roadmap
+## 🗺️ Roadmap
 
-Planned enhancements:
+| Feature | Status |
+|---------|--------|
+| Title-based anchoring | ✅ Done |
+| Rich metadata support | ✅ Done |
+| Auto-close issues | ✅ Done |
+| Duplicate detection | ✅ Done |
+| Multi-line TODOs | 🔜 Planned |
+| Due date support | 🔜 Planned |
+| Slack/Discord notifications | 🔜 Planned |
+| VSCode extension | 🔜 Planned |
 
-* Auto-close issues when all TODOs are removed
-* Parent/child issue relationships
-* Slack / Discord notifications
-* Weekly TODO digest
-* Metrics dashboard (age, density, resolution time)
-* Due dates (`DUE: YYYY-MM-DD`)
-* Deeper GitHub Projects automation
+> 📖 See the full [Roadmap](https://github.com/Kudakwashemaro/TODO-TO-ISSUES-DOCUMENTATION-TOOL/wiki/Roadmap) in the wiki.
 
 ---
 
-## Author
+## 🤝 Contributing
 
-**Kudakwashe Marongedza**
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+**Ways to contribute:**
+
+- Improve the parser
+- Add support for more comment styles
+- Build analytics or dashboards
+- Add CI enforcement
+- Write documentation
+
+Use the label `workflow-enhancement` for related issues.
+
+---
+
+## 👤 Author
+
+**Kudakwashe Marongedza**  
 Backend Developer | Django & API Specialist | SaaS Builder
 
-* Portfolio: [https://kudakwashem.is-a.dev](https://kudakwashem.is-a.dev)
-* Focus: scalable backends, workflow automation, developer tooling
+- 🌐 Portfolio: [kudakwashem.is-a.dev](https://kudakwashem.is-a.dev)
+- 💻 Focus: Scalable backends, workflow automation, developer tooling
 
 ---
 
-## Contributing & Collaboration
-
-This project is **open to collaboration**.
-
-If you are interested in:
-
-* Improving the parser
-* Adding CI enforcement
-* Extending metadata support
-* Building analytics or dashboards
-* Hardening the workflow for large teams
-
-Please:
-
-1. Open an issue with ideas or proposals
-2. Submit a pull request
-3. Or start a discussion
-
-Use the label:
-
-```
-workflow-enhancement
-```
-
-Contributions, critiques, and real-world feedback are welcome.
-
-
+<p align="center">
+  <a href="https://github.com/Kudakwashemaro/TODO-TO-ISSUES-DOCUMENTATION-TOOL/wiki">📖 Wiki</a> •
+  <a href="https://github.com/Kudakwashemaro/TODO-TO-ISSUES-DOCUMENTATION-TOOL/issues">🐛 Issues</a> •
+  <a href="https://github.com/Kudakwashemaro/TODO-TO-ISSUES-DOCUMENTATION-TOOL/discussions">💬 Discussions</a>
+</p>
