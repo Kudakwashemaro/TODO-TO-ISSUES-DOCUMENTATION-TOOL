@@ -1,0 +1,84 @@
+# TODO to GitHub Issues Configuration
+# Place this file at .github/todo-config.yml
+
+# Default labels to apply to all TODO issues
+default_labels:
+  - todo
+  - tech-debt
+
+# File extensions to scan for TODOs
+# Add or remove extensions based on your project's languages
+include_extensions:
+  - .py      # Python
+  - .js      # JavaScript
+  - .ts      # TypeScript
+  - .jsx     # React JavaScript
+  - .tsx     # React TypeScript
+  - .java    # Java
+  - .c       # C
+  - .cpp     # C++
+  - .h       # C/C++ headers
+  - .hpp     # C++ headers
+  - .cs      # C#
+  - .go      # Go
+  - .rs      # Rust
+  - .rb      # Ruby
+  - .php     # PHP
+  - .sh      # Shell scripts
+  - .bash    # Bash scripts
+  - .sql     # SQL
+  - .swift   # Swift
+  - .kt      # Kotlin
+  - .scala   # Scala
+  - .r       # R
+  - .m       # Objective-C / MATLAB
+
+# File extensions to exclude from scanning
+exclude_extensions:
+  - .md      # Markdown
+  - .txt     # Text files
+  - .rst     # reStructuredText
+  - .html    # HTML
+  - .xml     # XML
+  - .json    # JSON
+  - .yaml    # YAML
+  - .yml     # YAML
+  - .toml    # TOML
+  - .ini     # INI
+  - .cfg     # Config files
+  - .lock    # Lock files
+  - .log     # Log files
+
+# Directories to exclude from scanning
+exclude_directories:
+  - .git
+  - .github
+  - .venv
+  - venv
+  - env
+  - node_modules
+  - __pycache__
+  - .pytest_cache
+  - .mypy_cache
+  - .tox
+  - dist
+  - build
+  - target
+  - bin
+  - obj
+  - out
+  - vendor
+  - deps
+  - _build
+  - .next
+  - .nuxt
+  - coverage
+  - .coverage
+
+# Automatically close issues when TODOs are removed from code
+auto_close: true
+
+# Similarity threshold for duplicate detection (0.0 to 1.0)
+# Higher values = stricter matching, lower values = more aggressive duplicate detection
+# 0.85 means 85% similarity required to consider as duplicate
+duplicate_threshold: 0.85

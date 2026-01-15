@@ -1,0 +1,31 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/scripts/**'
+      - '.github/tests/**'
+  pull_request:
+    paths:
+      - '.github/scripts/**'
+      - '.github/tests/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          pip install -r .github/scripts/requirements.txt
+          
+      - name: Run tests
+        run: python -m unittest discover .github/tests

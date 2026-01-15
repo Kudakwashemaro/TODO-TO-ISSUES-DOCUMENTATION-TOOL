@@ -136,134 +136,67 @@ epic:oauth-migration
 
 ---
 
+## How to Use This Template
+
+1.  **Click "Use this template"** to create a new repository from this one.
+2.  **That's it!** The workflow is pre-configured to run on every push to `main`.
+
+### Configuration
+
+You can customize the behavior by editing `.github/todo-config.yml`.
+
+```yaml
+default_labels: ['todo', 'tech-debt']
+include_extensions: ['.py', '.js', '.ts']
+exclude_directories: ['node_modules', 'dist']
+auto_close: true
+duplicate_threshold: 0.85
+```
+
+### Manual Usage (Dry Run)
+
+You can run the script locally to see what issues would be created without actually creating them:
+
+```bash
+# Install dependencies
+pip install -r .github/scripts/requirements.txt
+
+# Run in dry-run mode
+python3 .github/scripts/todo_to_issues.py --dry-run
+```
+
+## Live Demo in this Repository
+
+This repository includes example files to demonstrate the workflow in action:
+
+1.  **[example.py](example.py)**: Contains "Canonical" TODOs that define the Issues.
+    *   Defines a critical feature: `Implement Payment Gateway Integration`.
+    *   Defines a security fix: `Fix XSS vulnerability`.
+    *   Demonstrates metadata usage: `PRIORITY`, `TYPE`, `EPIC`, `ASSIGNEE`.
+2.  **[example_utils.py](example_utils.py)**: Contains "Reference" TODOs.
+    *   Links back to the Payment Gateway issue from a different file.
+    *   Shows how multiple files can track progress on the same Issue.
+
+**What happens when you push?**
+The workflow will parse these files and create Issues like:
+
+*   **Issue 1:** `TODO: Implement Payment Gateway Integration`
+    *   **Labels:** `priority:critical`, `type:feature`, `epic:monetization`
+    *   **Body:** Includes a checklist linking to `example.py:5`, `example.py:9`, and `example_utils.py:10`.
+
 ## Workflow Behavior
 
-1. **Scan**
-
-   * Runs on push to `main` or manually
-   * Scans supported code files only
-
-2. **Match**
-
-   * Groups TODOs by `TITLE`
-   * Resolves `REF` entries to their canonical anchor
-
-3. **Create**
-
-   * Creates a GitHub Issue if none exists for the title
-   * Issue title:
-
-     ```
-     TODO: <Title>
-     ```
-   * Applies labels and assignee automatically
-
-4. **Update**
-
-   * Aggregates **all TODO locations** into a checklist
-   * Updates the issue as new references are added
-
----
-
-## Example: One Concern, Multiple Files
-
-**Canonical**
-
-```python
-# services/user_service.py
-# TODO(TITLE: Add Redis caching layer, PRIORITY: high, TYPE: performance, EFFORT: medium)
-```
-
-**References**
-
-```python
-# services/product_service.py
-# TODO(REF: Add Redis caching layer): Product lookups need caching
-```
-
-```python
-# config/cache_config.py
-# TODO(REF: Add Redis caching layer): Configure Redis backend
-```
-
-**Result**
-
-* One GitHub Issue
-* Three tracked locations
-* Single source of truth
-* Progress tracked via checkboxes
-
----
-
-## Epic Grouping Example
-
-```python
-# TODO(TITLE: Implement OAuth2 authorization, EPIC: oauth-migration, PRIORITY: critical)
-# TODO(TITLE: Add JWT token validation, EPIC: oauth-migration, PRIORITY: high)
-# TODO(TITLE: Configure OAuth providers, EPIC: oauth-migration)
-```
-
-Creates three issues, all grouped under:
-
-```
-epic:oauth-migration
-```
-
----
-
-## Best Practices
-
-### Do
-
-* Keep titles **stable and exact**
-* Use one canonical TODO per concern
-* Add meaningful context to references
-* Use metadata for planning
-* Remove TODOs when work is complete
-* Close issues once all TODOs are resolved
-
-### Don’t
-
-* Duplicate canonical TODOs with the same title
-* Change titles after issue creation
-* Use REF without a matching TITLE
-* Use special characters in titles
-* Omit the colon before descriptions
-
----
-
-## Supported File Types
-
-Scanned extensions include:
-
-```
-.py .js .ts .jsx .tsx .java .c .cpp .h .hpp
-.cs .go .rs .rb .php .sh .bash
-```
-
-Excluded:
-
-* Documentation files
-* Virtual environments
-* Dependency directories (`node_modules`, `.venv`, etc.)
-
----
-
-## Maintenance & Customization
-
-* **Workflow**: `.github/workflows/todo-to-issues.yml`
-* Customize:
-
-  * Scanned file extensions
-  * Excluded directories
-  * Label mappings
-  * Issue body template
+1.  **Scan**: Runs on push to `main` or manually.
+2.  **Match**: Groups TODOs by `TITLE`.
+3.  **Create**: Creates a GitHub Issue if none exists for the title.
+4.  **Update**: Updates existing issues with new references.
+5.  **Auto-Close**: (Optional) Closes issues if the TODO is removed from the code.
 
 **Troubleshooting**
 
-* Check GitHub Actions logs
-* Ensure `GITHUB_TOKEN` has `issues: write`
-* Verify TODO syntax exactly matches supported patterns
+*   Check GitHub Actions logs.
+*   Ensure `GITHUB_TOKEN` has `issues: write` permission (default in new repos).
+
 
 ---
 
